@@ -1,0 +1,25 @@
+# Dependencias y librerías necesarias para el proyecto
+# Instalar con: pip install -r requerimientos.txt
+
+# --- Núcleo / utilidades ---
+python-dotenv==1.0.1
+
+# --- HTTP / APIs ---
+fastapi==0.115.0
+uvicorn==0.30.6
+pydantic==2.9.2
+
+# --- Interfaz gráfica (Fase 4) ---
+streamlit==1.39.0
+
+# --- Testing ---
+pytest==8.3.3
+pytest-asyncio==0.24.0
+
+# --- Procesamiento de datos ---
+pandas==2.2.3
+numpy==2.1.1
+
+# --- Huawei Cloud / MaaS ---
+# Ajustar según el SDK específico requerido por el reto
+openai==1.51.0

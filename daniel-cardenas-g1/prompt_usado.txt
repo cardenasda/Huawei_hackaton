@@ -1,0 +1,311 @@
+# Prompts utilizados en Huawei MaaS
+
+Bitácora de prompts utilizados durante el desarrollo del Reto 2 (FlowMatch
+Assignment Engine) con el modelo **GLM-5.2**. Los prompts evolucionaron
+iterativamente: cada uno se ajustó a partir del resultado del anterior,
+incorporando contexto del enunciado, restricciones de la rúbrica y lecciones
+aprendidas de los bugs encontrados.
+
+---
+
+## Prompt 1 — Setup del repositorio y `.gitignore`
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Pre-preparación
+
+**Prompt usado:**
+```
+Tenemos este repositorio para un reto en específico: vamos a realizar el Reto 2
+(FlowMatch Assignment Engine). Antes de empezar, crear un `.gitignore` para evitar
+subir archivos innecesarios o sensibles y tener una metodología de desarrollo limpia.
+
+Contexto entregado al modelo:
+- Estructura actual del repo (daniel-cardenas-g1/codigo/, Retos/, README.md)
+- Enunciado completo del Reto 2 (4 fases + bonos + rúbrica)
+- Reglas del README del hackathon: prohibido subir .env, credenciales, tokens, claves
+- Stack previsto: Python 3.10+, FastAPI, Streamlit, pytest, Jupyter (Fase 4)
+
+Generar un .gitignore que cubra: secrets, Python (venv, __pycache__, .egg),
+Jupyter checkpoints, Streamlit, Node.js, DBs locales, logs, IDEs (VS Code, PyCharm),
+archivos de SO (Windows/macOS/Linux), testing, Docker, modelos de IA grandes.
+Además crear un .env.example como plantilla de variables de entorno (sin secrets reales).
+```
+
+**Resultado:**
+- `.gitignore` en la raíz con 15 categorías, adaptado al stack exacto del proyecto.
+- `.env.example` con plantillas para credenciales Huawei MaaS, endpoint GLM 5.2,
+  configuración del servicio FlowMatch y parámetros del circuit breaker.
+- **Aprendizaje:** Entregar el enunciado + reglas del repo antes de pedir el
+  `.gitignore` produce un resultado preciso en lugar de un template genérico.
+
+---
+
+## Prompt 2 — Plan de tareas mapeado a la rúbrica de evaluación
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Pre-preparación
+
+**Prompt usado:**
+```
+Crear un archivo de tareas de desarrollo con detalle de cada tarea que vamos a
+realizar para desarrollar el Reto 2 y cumplir con la Rúbrica de evaluación.
+Tener en cuenta la rúbrica al especificar cada tarea.
+
+Contexto entregado al modelo:
+- Enunciado completo del Reto 2 (Fases 1-4 + 4 bonos)
+- Rúbrica de evaluación completa (100 pts base + 30 pts bonos):
+  * Funcionalidad core (38 pts): Fase 1, 2, 3 + clasificación estado
+  * Calidad técnica (20 pts): arquitectura modular + errores/casos borde
+  * Explicabilidad (14 pts): razones trazables a reglas
+  * Interfaz gráfica (13 pts): formulario + simular ráfaga
+  * Uso efectivo de IA (15 pts): bitácora prompts + entendimiento código
+
+Cada tarea debe tener:
+- Checklist accionable (- [ ])
+- Criterio de aceptación o verificación concreta
+- Referencia al ejemplo del enunciado cuando aplique
+- Mapeo explícito a la rúbrica (categoría + puntos)
+Incluir tabla final de cobertura que confirme que las tareas cubren los 130 pts.
+```
+
+**Resultado:**
+- `TAREAS_RETO_2.md` con 35+ tareas en 8 fases + 4 bonos.
+- Tabla de cobertura confirma 100 pts base + 30 pts bonos cubiertos.
+- **Aprendizaje:** Mapear tareas a la rúbrica desde el inicio evita scope creep
+  y garantiza que cada línea de código contribuya a puntos de evaluación.
+
+---
+
+## Prompt 3 — Diseño de arquitectura como arquitectos de software
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 0 (Setup y arquitectura base)
+
+**Prompt usado:**
+```
+Vamos a tratar este punto como si fuéramos arquitectos de software para que nos
+quede de la mejor manera y sea una arquitectura limpia y sin fallos.
+
+Contexto entregado al modelo:
+- Rol explícito: arquitecto de software
+- Enunciado completo del Reto 2 (4 fases, bonos, rúbrica)
+- Restricciones: thread-safe (Bono B), circuit breaker (Fase 3), sliding window
+  (Fase 2), reglas configurables (Fase 1), explicabilidad (14 pts rúbrica)
+
+Diseñar antes de codear:
+1. Documentar Architecture Decision Records (ADRs) con contexto, decisión y consecuencia
+2. Definir estructura de carpetas con separación de responsabilidades
+3. Listar patrones a aplicar y garantías de la arquitectura
+
+Aplicar Clean Architecture + Hexagonal (Ports & Adapters):
+- domain/ (lógica pura, 0 dependencias externas)
+- application/ (use cases + ports/abstracciones)
+- infrastructure/ (adapters concretos: FastAPI, mock pricing, config)
+- presentation/ (UI: Streamlit)
+Regla de dependencia: siempre hacia adentro (domain no conoce infra).
+```
+
+**Resultado — 7 ADRs generados:**
+1. **ADR-001**: Clean Architecture por capas (domain → application → infrastructure)
+2. **ADR-002**: Strategy Pattern para reglas de asignación (pipeline configurable)
+3. **ADR-003**: Thread-safe State con locks granulares por courier (Bono B)
+4. **ADR-004**: Circuit Breaker con 3 estados (Closed/Open/Half-Open)
+5. **ADR-005**: Sliding Window real (no ventana fija) para rate limiting
+6. **ADR-006**: Dependency Injection (Clock y PricingService inyectados para tests)
+7. **ADR-007**: Value Objects inmutables (frozen dataclasses) para Order y Decision
+
+- `ARCHITECTURE.md` creado con ADRs, estructura, flujo y garantías.
+- **Aprendizaje:** Asignar rol explícito + pedir "diseña antes de codear" produce
+  decisiones fundamentadas (ADRs) en lugar de código improvisado.
+
+---
+
+## Prompt 4 — Materialización de la arquitectura (Fase 0 → Fase 1)
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 0 → Fase 1
+
+**Prompt usado:**
+```
+Materializar la arquitectura diseñada en los ADRs. Crear todos los archivos de la
+estructura Clean Architecture con el código base implementado, siguiendo el orden:
+
+1. domain/models.py — Value Objects (Order, Courier, Decision, Reason) con
+   validación fail-fast en __post_init__ y Enums para Priority/OrderStatus.
+2. domain/state.py — Estado compartido thread-safe con RLock por courier
+   (assign_to_courier es atómica: valida capacidad + incrementa en un lock).
+3. domain/rules/ — Strategy Pattern: base.py (AssignmentRule ABC + RuleResult),
+   same_zone.py (filtro duro misma zona), capacity.py (descarta llenos),
+   least_loaded.py (ordena por menor active_orders), min_cost.py (Fase 3).
+4. domain/surge.py — Sliding window + contención auto-expirable (120s).
+   Detectar 3 pedidos consecutivos con todos los couriers llenos y cola creciendo.
+5. domain/pricing.py — Circuit Breaker (Closed/Open/Half-Open) + compute_cost.
+6. domain/engine.py — Orquestador: pipeline de reglas + surge + pricing + state.
+7. application/assign_service.py + ports/ (Clock, PricingService interfaces).
+8. infrastructure/ (config.py, system_clock.py, mock_pricing.py, api/main.py).
+9. presentation/streamlit_app.py — Formulario + botón simular ráfaga (Fase 4).
+10. tests/conftest.py — FakeClock + FakePricing para tests deterministas.
+11. main.py — Composition Root con DI wiring + CLI (demo, assign, api).
+
+Usar imports absolutos para cross-package (from domain.models import X) y
+relativos solo dentro del mismo paquete (from .models import X).
+```
+
+**Resultado:**
+- 15+ archivos creados siguiendo la arquitectura.
+- Composition Root en `main.py` con DI wiring completo.
+- FastAPI adapter (`POST /assign`, `GET /state`) y Streamlit UI creados.
+
+**Bugs encontrados y corregidos:**
+1. **SameZoneRule como soft ordering:** el modelo interpretó "misma zona primero"
+   como ordenamiento suave (same-zone first pero mantenía otros). El enunciado
+   espera **filtro duro** (solo same-zone; otros son fallback). Los tests del
+   enunciado detectaron el bug (`cour_B` ganó sobre `cour_A`). Corregido → 10/10 tests.
+2. **Imports relativos cross-package:** `from ..domain` falla cuando `domain` y
+   `application` son paquetes top-level. Corregido con imports absolutos +
+   `conftest.py` con `sys.path` setup.
+
+- **Aprendizaje:** Los tests del enunciado son la fuente de verdad. Correrlos
+  inmediatamente después de implementar detecta bugs de interpretación.
+
+---
+
+## Prompt 5 — Validación end-to-end contra el enunciado
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 1 (validación)
+
+**Prompt usado:**
+```
+Ejecutar el demo del enunciado (python main.py demo) y validar que la salida
+coincida con el ejemplo esperado de la Fase 1. Correr la suite de tests completa.
+
+Ejemplo esperado del enunciado (Fase 1):
+{
+  "order_id": "ord_00234",
+  "status": "ASSIGNED",
+  "assigned_courier": "cour_A",
+  "reasons": [
+    { "rule": "same_zone_preferred", "detail": "cour_A is in pickup_zone=centro" },
+    { "rule": "capacity_ok", "detail": "cour_A at 1/3 (cour_C skipped: 3/3 full)" },
+    { "rule": "least_loaded", "detail": "cour_A chosen (1 active order, lowest among valid)" }
+  ]
+}
+
+Validar:
+- status == "ASSIGNED" y assigned_courier == "cour_A"
+- reasons contienen las 3 reglas exactas
+- cour_A.active_orders se incrementa de 1 a 2 después de la asignación
+- Casos borde: all couriers full → QUEUED, no couriers → QUEUED,
+  distance_km negativa → ValueError, priority inválida → ValueError
+```
+
+**Resultado:**
+- `python main.py demo` produce: `ASSIGNED → cour_A` con las 3 reasons exactas
+  + `cost: 6600` + `pricing_status: "ok"`.
+- `pytest`: **10/10 tests pasan** (ejemplo enunciado, all-full → QUEUED,
+  no couriers → QUEUED, validación de inputs negativos/inválidos).
+- **Aprendizaje:** La salida del demo debe compararse carácter por carácter con
+  el enunciado. Diferencias en `reasons[].detail` revelan bugs de interpretación.
+
+---
+
+## Prompt 6 — Fase 2: Control de ráfagas (ventanas deslizantes + contención)
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 2
+
+**Prompt usado:**
+```
+Seguir con la Fase 2 según las tareas definidas en TAREAS_RETO_2.md.
+
+Tareas a implementar:
+2.1 — Límite de ritmo por repartidor (sliding window): un repartidor no recibe
+      >N pedidos nuevos en W segundos, aunque tenga capacidad libre.
+2.2 — Balanceo de zona: si una pickup_zone recibe avalancha, repartir entre
+      repartidores de zonas vecinas antes que sobrecargar la zona.
+2.3 — Modo de contención por saturación sostenida: si 3 pedidos consecutivos
+      encuentran TODOS los repartidores llenos Y la cola crece, activar
+      contención temporal: REJECT pedidos normal por 120s (auto-expirable).
+      Pedidos express siguen encolándose (QUEUED).
+2.4 — Expiración automática: tras 120s, desactivar contención. Pedidos normal
+      subsecuentes dentro de la ventana traen razón "surge_window_active" sin
+      recorrer repartidores.
+
+Contexto del enunciado (comportamiento esperado):
+- 6 pedidos a zona centro en 7 segundos mientras repartidores se llenan.
+- Pedido #6 (normal, todos llenos): REJECTED con reasons:
+  "capacity_ok" (0 couriers with free capacity) +
+  "surge_protection_active" (all couriers full, queue growing for 3 orders, window=120s)
+- Pedido #7 (normal, dentro de 120s): REJECTED con "surge_window_active" sin recalcular.
+- Pedido #7 (express, dentro de 120s): QUEUED (no rechazado).
+
+Refactorizar el flujo del engine:
+1. Check contención activa ANTES de la pipeline → REJECT normal / QUEUE express.
+2. Ejecutar pipeline (same_zone → capacity → least_loaded → min_cost).
+3. Si no hay candidatos same-zone → zone balancing (zonas vecinas).
+4. Aplicar rate limiting por repartidor (sliding window).
+5. Si no hay candidatos → registrar full event (puede activar contención) → QUEUE/REJECT.
+6. Asignar atómicamente + reset full counter.
+
+Crear tests que validen:
+- Rate limiting: 4to pedido en ventana → QUEUED (courier_rate_limited).
+- Sliding window: tras 10s, eventos viejos se purgan → puede asignar.
+- Zone balancing: centro lleno → asigna a norte (neighbor).
+- Contención: 6 pedidos llenan 2 couriers (3+3), 7-8 QUEUE, 9 REJECTED.
+- Normal durante contención → REJECTED (surge_window_active).
+- Express durante contención → QUEUED.
+- Auto-expiración: tras 120s + release courier → ASSIGNED.
+```
+
+**Resultado:**
+- `surge.py` refactorizado: `check_active_containment()` (pre-pipeline) +
+  `record_full_event()` (post-pipeline) + `reset_full_counter()`.
+- `engine.py` refactorizado con flujo correcto: contención → pipeline → zone
+  balancing → rate limiting → full event → asignar.
+- `test_fase2_surge.py` creado con 8 tests en 4 clases:
+  - `TestPerCourierRateLimit`: rate limiting + reset tras ventana.
+  - `TestZoneBalancing`: fallback a zona vecina.
+  - `TestContainmentMode`: 6 pedidos → contención, normal REJECTED, express QUEUED, auto-expire.
+  - `TestSlidingWindow`: purga de eventos viejos.
+- **18/18 tests pasan** (10 Fase 1 + 8 Fase 2, sin regresiones).
+
+**Bug de diseño corregido:**
+- El flujo original evaluaba el surge controller ANTES de la pipeline, lo que
+  impedía que el pedido #6 tuviera ambas reasons (`capacity_ok` + `surge_protection_active`).
+  El enunciado muestra que la pipeline se ejecuta primero (produce `capacity_ok`)
+  y el surge controller se evalúa después (produce `surge_protection_active`).
+  Corregido separando en `check_active_containment` (pre) y `record_full_event` (post).
+
+- **Aprendizaje:** El orden de las reasons en el enunciado revela el orden de
+  evaluación. `capacity_ok` antes de `surge_protection_active` indica que la
+  pipeline corre primero y el surge después.
+
+---
+
+# Lecciones aprendidas — Patrones de prompt que funcionaron
+
+1. **Contexto primero:** Entregar el enunciado completo + rúbrica antes de pedir
+   código produce soluciones alineadas a los criterios de evaluación.
+2. **Rol explícito:** "Tratar este punto como si fuéramos arquitectos de software"
+   produjo 7 ADRs fundamentados en lugar de código plano.
+3. **Diseña → Codea → Testea:** Secuencia obligatoria. Diseñar primero (ADRs),
+   luego materializar, luego validar contra el enunciado. Evita refactor costoso.
+4. **Tests como fuente de verdad:** Los ejemplos del enunciado son specs
+   ejecutables. Convertirlos a tests detecta bugs de interpretación immediately.
+5. **Restricciones como constraints duros:** "Cumplir con la rúbrica" se trató
+   como constraint: cada tarea mapeada a puntos específicos de evaluación.
+
+## Patrones que NO funcionaron (y cómo se corrigieron)
+
+1. **SameZoneRule como soft ordering:** "misma zona primero" se interpretó como
+   ordenamiento suave. El enunciado espera filtro duro. → Corrección: tests del
+   enunciado detectaron el bug; se cambió a hard filter.
+2. **Imports relativos cross-package:** `from ..domain` falla cuando los paquetes
+   son top-level. → Corrección: imports absolutos + conftest.py con sys.path.

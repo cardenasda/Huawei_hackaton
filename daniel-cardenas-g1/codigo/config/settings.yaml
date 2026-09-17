@@ -1,0 +1,31 @@
+# FlowMatch Assignment Engine — Configuration
+# This file provides defaults; environment variables override these values.
+
+rules:
+  enabled:
+    - same_zone
+    - capacity
+    - least_loaded
+    - min_cost
+
+surge:
+  courier_rate_max: 3              # max new orders per courier in window
+  courier_rate_window_seconds: 10  # sliding window size
+  containment_threshold: 3         # consecutive "all full" to trigger containment
+  containment_duration_seconds: 120  # how long containment lasts
+  neighbor_zones:
+    centro: [norte, sur]
+    norte: [centro]
+    sur: [centro]
+
+pricing:
+  base_rate_cop: 5000              # fallback flat rate (COP)
+  per_km_rate_cop: 500             # per-km charge (COP)
+  failure_threshold: 3             # consecutive failures to open circuit
+  recovery_timeout_seconds: 15     # time before half-open trial
+  mock_failure_rate: 0.3           # 30% chance of failure/timeout
+
+server:
+  port: 8000
+  env: development
+  log_level: DEBUG

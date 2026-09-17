@@ -1,0 +1,263 @@
+# ============================================================================
+# .gitignore — Huawei Hackathon / FlowMatch Assignment Engine (Reto 2)
+# Metodología de desarrollo limpia: evita subir archivos innecesarios o sensibles
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# SECRETS Y ARCHIVOS SENSIBLES  (NUNCA subir al repositorio)
+# ----------------------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+.env.test
+*.env
+secrets.json
+secrets.yaml
+secrets.yml
+credentials.json
+credentials.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+token.txt
+*_token.*
+*secret*
+*.keystore
+service-account*.json
+# Huawei Cloud / MaaS credentials
+huawei_credentials*
+*.ak
+*.sk
+
+# ----------------------------------------------------------------------------
+# PYTHON
+# ----------------------------------------------------------------------------
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.dylib
+
+# Distribución / packaging
+build/
+dist/
+wheels/
+*.egg
+*.egg-info/
+*.egg-link
+develop-eggs/
+sdist/
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# Cache de herramientas Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+.cache/
+
+# Type stubs / pyright
+.pytyped/
+pyrightconfig.json
+
+# ----------------------------------------------------------------------------
+# JUPYTER NOTEBOOKS
+# ----------------------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints
+# Mantener notebooks .ipynb (útiles para la Fase 4), pero ignorar checkpoints
+
+# ----------------------------------------------------------------------------
+# STREAMLIT / DASH / FLASK / FASTAPI  (interfaz Fase 4)
+# ----------------------------------------------------------------------------
+.streamlit/
+__streamlit__/
+instance/
+flask_session/
+
+# ----------------------------------------------------------------------------
+# NODE.JS / FRONTEND  (por si la UI web usa JS)
+# ----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn/
+.pnp.*
+.pnp.js
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+# Build outputs de frontend
+.next/
+out/
+.cache/
+.parcel-cache/
+.turbo/
+.vercel/
+
+# ----------------------------------------------------------------------------
+# BASES DE DATOS / ARCHIVOS DE DATOS LOCALES
+# ----------------------------------------------------------------------------
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+*.rdb
+*.mdb
+# Redis / MongoDB dumps
+dump.rdb
+*.mongod
+
+# ----------------------------------------------------------------------------
+# LOGS Y ARCHIVOS DE SALIDA
+# ----------------------------------------------------------------------------
+*.log
+logs/
+log/
+*.out
+*.err
+nohup.out
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ----------------------------------------------------------------------------
+# ARCHIVOS TEMPORALES Y DE RESPALDO
+# ----------------------------------------------------------------------------
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+tmp/
+temp/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ----------------------------------------------------------------------------
+# IDEs Y EDITORES
+# ----------------------------------------------------------------------------
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+# PyCharm / IntelliJ / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+atlassian-ide-plugin.xml
+# Eclipse / PyDev
+.project
+.pydevproject
+.settings/
+.classpath
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+# Atom
+.atom/
+
+# ----------------------------------------------------------------------------
+# SISTEMAS OPERATIVOS
+# ----------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ----------------------------------------------------------------------------
+# TESTING / CI / COVERAGE
+# ----------------------------------------------------------------------------
+test-results/
+coverage/
+.nyc_output/
+*.lcov
+junit.xml
+junit-results.xml
+
+# ----------------------------------------------------------------------------
+# DOCKER  (si se usa contenedores)
+# ----------------------------------------------------------------------------
+docker-compose.override.yml
+.dockerignore
+
+# ----------------------------------------------------------------------------
+# MISC / ARCHIVOS GRANDES
+# ----------------------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+# Modelos / pesos de IA grandes
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+
+# ----------------------------------------------------------------------------
+# CONFIGURACIÓN LOCAL DE HERRAMIENTAS
+# ----------------------------------------------------------------------------
+.direnv/
+.envrc
+.pre-commit-config.yaml.local
