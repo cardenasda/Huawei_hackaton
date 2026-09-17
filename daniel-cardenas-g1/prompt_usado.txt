@@ -289,6 +289,82 @@ Crear tests que validen:
 
 ---
 
+## Prompt 7 — Fase 3: Optimización de costo + circuit breaker
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 3
+
+**Prompt usado:**
+```
+Implementar y testear la Fase 3: optimización de costo + resiliencia con circuit breaker.
+
+El circuit breaker ya está implementado en domain/pricing.py con 3 estados:
+- CLOSED: funcionamiento normal, las llamadas pasan.
+- OPEN: tras 3 fallos consecutivos, bloquea por 15s, usa tarifa base fija.
+- HALF_OPEN: tras 15s, permite una llamada de prueba → CLOSED (éxito) u OPEN (fallo).
+
+El engine ya integra _compute_cost() que usa el circuit breaker.
+
+Crear tests (test_fase3_pricing.py) que validen:
+1. La decisión incluye cost y pricing_status.
+2. Circuit breaker abre tras 3 fallos consecutivos del pricing service.
+3. Cuando el circuito está abierto, se usa tarifa base fija (degradación segura).
+4. Tras recovery_timeout (15s), el circuito pasa a half-open y permite recovery.
+5. Si la prueba half-open falla, el circuito vuelve a open.
+6. La asignación NUNCA falla aunque el pricing falle (degradación segura).
+
+Usar FakePricing con fail=True para forzar fallos deterministas.
+```
+
+**Resultado:**
+- `test_fase3_pricing.py` creado con 7 tests en 2 clases:
+  - `TestCostComputation`: la decisión incluye cost y pricing_status.
+  - `TestCircuitBreaker`: abre tras 3 fallos, degrada a tarifa fija,
+    half-open tras 15s, recovery, reopen si half-open falla, asignación resiliente.
+- **Aprendizaje:** El circuit breaker garantiza que el pricing nunca degrade
+  la asignación. La degradación segura (tarifa fija) es clave para resiliencia.
+
+---
+
+## Prompt 8 — Fase 4 + Edge cases + finalización
+
+**Modelo:** GLM-5.2 (MaaS via LiteLLM)
+**Fecha:** 2026-09-17
+**Fase:** Fase 4 + edge cases + entrega
+
+**Prompt usado:**
+```
+Finalizar las fases restantes:
+
+Fase 4 (Interfaz Streamlit): ya implementada en presentation/streamlit_app.py.
+- Formulario con campos: order_id, pickup_zone, distance_km, priority.
+- Botón "Asignar" → muestra decisión con emoji (🟢/🟡/🔴).
+- Botón "Simular ráfaga" → N pedidos a la misma zona, visualiza contención.
+- Editor de couriers en sidebar.
+
+Edge cases (test_edge_cases.py): crear tests para casos borde:
+- Distancia cero (válida).
+- Courier con max_capacity=1 (se llena con un pedido).
+- No sobre-asignación: tras 20 pedidos, ningún courier supera max_capacity.
+- Avalancha de express durante contención: siempre QUEUED, nunca REJECTED.
+
+Finalizar:
+- Actualizar README con arquitectura, fases implementadas, ejecución.
+- Actualizar prompt_usado.txt con todos los prompts.
+- Commit y push al fork.
+```
+
+**Resultado:**
+- `test_edge_cases.py` creado con 4 tests: distancia cero, capacity=1,
+  no sobre-asignación (20 pedidos), avalancha express durante contención.
+- README actualizado con arquitectura, fases, ejecución (demo, API, UI, tests).
+- **29/29 tests pasan** en total (Fase 1: 10, Fase 2: 8, Fase 3: 7, Edge: 4).
+- **Aprendizaje:** Los tests de no-sobre-asignación son la garantía más
+  importante: demuestran que el sistema es seguro ante concurrencia y ráfagas.
+
+---
+
 # Lecciones aprendidas — Patrones de prompt que funcionaron
 
 1. **Contexto primero:** Entregar el enunciado completo + rúbrica antes de pedir
